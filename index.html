@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Botão Rive</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffffff;
+        }
+        canvas {
+            width: 1000px;
+            height: 500px;
+            cursor: pointer;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="rive-canvas" width="1000" height="500"></canvas>
+    <script src="https://unpkg.com/@rive-app/canvas@latest"></script>
+    <script>
+        const canvas = document.getElementById('rive-canvas');
+
+        const riveInstance = new rive.Rive({
+            src: 'button.riv',
+            canvas: canvas,
+            stateMachines: 'State Machine 1',
+            autoplay: true,
+            onLoad: () => {
+                riveInstance.resizeToCanvas();
+
+                const inputs = riveInstance.stateMachineInputs('State Machine 1');
+                const hoverInput = inputs.find(i => i.name === 'Hoover ativo');
+                const clickInput = inputs.find(i => i.name === 'Click');
+
+                canvas.addEventListener('mouseover', () => {
+                    if (hoverInput) {
+                        hoverInput.value = true;
+                    }
+                });
+
+                canvas.addEventListener('mouseout', () => {
+                    if (hoverInput) {
+                        hoverInput.value = false;
+                    }
+                });
+
+                canvas.addEventListener('mousedown', () => {
+                    if (clickInput) {
+                        clickInput.fire();
+                    }
+                });
+            },
+        });
+    </script>
+
+</body>
+</html>
+
