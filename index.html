@@ -3,63 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teste de Botão Rive</title>
+    <title>Personagem Guiga Interativo (Alta Resolução)</title>
     <style>
         body, html {
-            height: 100%;
             margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #ffffff;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #f0f0f0; /* Sinta-se à vontade para mudar a cor de fundo */
         }
-        canvas {
-            width: 1000px;
-            height: 500px;
-            cursor: pointer;
-            border-radius: 12px;
+        #rive-canvas {
+            width: 1080px;
+            height: 720px;
         }
     </style>
 </head>
 <body>
-    <canvas id="rive-canvas" width="1000" height="500"></canvas>
+    <canvas id="rive-canvas"></canvas>
+
     <script src="https://unpkg.com/@rive-app/canvas@latest"></script>
+    
     <script>
         const canvas = document.getElementById('rive-canvas');
 
-        const riveInstance = new rive.Rive({
-            src: 'button.riv',
+        // Função para ajustar a resolução do canvas para máxima qualidade
+        function resizeCanvas() {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            
+            if (riveInstance) {
+                riveInstance.resizeDrawingSurfaceToCanvas();
+            }
+        }
+
+        let riveInstance;
+
+        resizeCanvas();
+
+        // Cria a instância do Rive com as novas informações
+        riveInstance = new rive.Rive({
+            // 1. O arquivo foi alterado para o seu personagem
+            src: 'guiga.riv', 
+            
             canvas: canvas,
+            
+            // 2. O nome da State Machine continua o mesmo
             stateMachines: 'State Machine 1',
+
+            // 3. O nome da Artboard foi atualizado com base na sua nova imagem
+            artboard: 'Artboard',
+            
             autoplay: true,
-            onLoad: () => {
-                riveInstance.resizeToCanvas();
-
-                const inputs = riveInstance.stateMachineInputs('State Machine 1');
-                const hoverInput = inputs.find(i => i.name === 'Hoover ativo');
-                const clickInput = inputs.find(i => i.name === 'Click');
-
-                canvas.addEventListener('mouseover', () => {
-                    if (hoverInput) {
-                        hoverInput.value = true;
-                    }
-                });
-
-                canvas.addEventListener('mouseout', () => {
-                    if (hoverInput) {
-                        hoverInput.value = false;
-                    }
-                });
-
-                canvas.addEventListener('mousedown', () => {
-                    if (clickInput) {
-                        clickInput.fire();
-                    }
-                });
-            },
         });
-    </script>
 
+        // Adiciona um listener para redimensionar o canvas se a janela mudar de tamanho
+        window.addEventListener('resize', resizeCanvas);
+    </script>
 </body>
 </html>
-
